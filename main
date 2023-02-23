@@ -1,0 +1,38 @@
+# AES-demo
+
+import base64
+from Crypto.Cipher import AES
+
+
+class AESEncrypt:
+
+    def __init__(self, keys=None):
+        self.key = keys
+
+    def to_16(self, value):
+        while len(value) % 16 != 0:
+            value += '\0'
+        return str.encode(value)  # bytes
+
+    def encrypt_string(self, mystr):  # encrypt
+        text = base64.b64encode(mystr.encode('utf-8')).decode('ascii')
+        aes = AES.new(self.to_16(self.key), AES.MODE_ECB)
+        encrypt_aes = aes.encrypt(self.to_16(text))
+        encrypted_text = str(base64.encodebytes(encrypt_aes), encoding='utf-8')
+        return encrypted_text
+
+    def decrypt_string(self, mystr):  # decrypt
+        aes = AES.new(self.to_16(self.key), AES.MODE_ECB)
+        base64_decrypted = base64.decodebytes(mystr.encode(encoding='utf-8'))
+        decrypted_text = str(aes.decrypt(base64_decrypted), encoding='utf-8')
+        decrypted_text = base64.b64decode(decrypted_text.encode('utf-8')).decode('utf-8')
+        return decrypted_text
+
+
+if __name__ == '__main__':
+    app = AESEncrypt('app==1x')
+    my_str = ""
+    str1 = app.encrypt_string(my_str)
+    print(str1)
+    str2 = app.decrypt_string(str1)
+    print('---',str2)
